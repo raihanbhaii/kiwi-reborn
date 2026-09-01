@@ -81,6 +81,31 @@
     <string name="preferences_tabswitcher">Tab switcher</string>
     <string name="preferences_nightmode">Night mode</string>
 
+    <string name="preferences_adblock">Adblock</string>
+    <string name="preferences_adblock_enable">Adblock</string>
+    <string name="preferences_adblock_enable_summary">Block ads and trackers at the network level (Brave-style native engine)</string>
+    <string name="preferences_adblock_filter_lists">Filter lists</string>
+    <string name="preferences_adblock_list_easylist">EasyList</string>
+    <string name="preferences_adblock_list_easylist_summary">The core general-purpose ad filter list</string>
+    <string name="preferences_adblock_list_easyprivacy">EasyPrivacy</string>
+    <string name="preferences_adblock_list_easyprivacy_summary">Tracking and privacy-invading resources</string>
+    <string name="preferences_adblock_list_fanboy_annoyance">Fanboy\'s Annoyance List</string>
+    <string name="preferences_adblock_list_easylist_cookies">EasyList Cookies</string>
+    <string name="preferences_adblock_list_custom_url">Custom list URL</string>
+    <string name="preferences_adblock_custom_url_title">Custom list URL</string>
+    <string name="preferences_adblock_custom_url_message">URL of a filter list in ABP/EasyList syntax</string>
+    <string name="preferences_adblock_update_now">Update filter lists now</string>
+    <string name="preferences_adblock_update_now_summary">Re-download the enabled lists in the background</string>
+    <string name="preferences_adblock_advanced">Advanced</string>
+    <string name="preferences_adblock_custom_filters_title">Custom filters</string>
+    <string name="preferences_adblock_custom_filters_summary">One filter per line (ABP syntax, e.g. ||ads.example.com^)</string>
+    <string name="preferences_adblock_allowlist_title">Allowed sites</string>
+    <string name="preferences_adblock_allowlist_summary">One domain per line — adblock is disabled there</string>
+    <string name="preferences_adblock_stats_title">Statistics</string>
+    <string name="preferences_adblock_stats_summary">%1$d requests blocked · %2$d network rules · %3$d cosmetic rules</string>
+    <string name="preferences_adblock_background_playback">Background playback</string>
+    <string name="preferences_adblock_background_playback_summary">Keep video and audio playing when the app is in the background or the screen is off</string>
+
     <string name="download_preferences_enable_external_download_manager_title">External download manager</string>
     <string name="download_preferences_enable_external_download_manager_summary">Use external download manager (ex: Advanced Download Manager)</string>
 

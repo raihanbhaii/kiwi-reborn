@@ -27,6 +27,7 @@ import org.chromium.base.ContextUtils;
 import org.chromium.base.supplier.ObservableSupplier;
 import org.chromium.chrome.R;
 import org.chromium.chrome.browser.flags.ChromeFeatureList;
+import org.chromium.chrome.browser.kiwi.KiwiFlagsBridgeJni;
 import org.chromium.chrome.browser.homepage.HomepageManager;
 import org.chromium.chrome.browser.night_mode.NightModeMetrics.ThemeSettingsEntry;
 import org.chromium.chrome.browser.night_mode.NightModeUtils;
@@ -82,6 +83,7 @@ public class MainSettings extends PreferenceFragmentCompat
     public static final String PREF_SEARCH_ENGINE = "search_engine";
     public static final String PREF_PASSWORDS = "passwords";
     public static final String PREF_HOMEPAGE = "homepage";
+    public static final String PREF_BACKGROUND_PLAYBACK = "kiwi_background_playback";
     public static final String PREF_TOOLBAR_SHORTCUT = "toolbar_shortcut";
     public static final String PREF_UI_THEME = "ui_theme";
     public static final String PREF_PRIVACY = "privacy";
@@ -174,6 +176,23 @@ public class MainSettings extends PreferenceFragmentCompat
         SettingsUtils.addPreferencesFromResource(this, R.xml.main_preferences);
 
         cachePreferences();
+
+        // Kiwi Reborn Ultimate: background playback master switch.
+        Preference backgroundPlayback = findPreference(PREF_BACKGROUND_PLAYBACK);
+        if (backgroundPlayback != null) {
+            backgroundPlayback.setPersistent(false);
+            backgroundPlayback.setChecked(ContextUtils.getAppSharedPreferences()
+                    .getBoolean("kiwi_background_playback", true));
+            backgroundPlayback.setOnPreferenceChangeListener((preference, newValue) -> {
+                boolean enabled = (Boolean) newValue;
+                ContextUtils.getAppSharedPreferences()
+                        .edit()
+                        .putBoolean("kiwi_background_playback", enabled)
+                        .apply();
+                KiwiFlagsBridgeJni.get().setBackgroundPlaybackEnabled(enabled);
+                return true;
+            });
+        }
 
         mSyncPromoPreference.setOnStateChangedCallback(this::onSyncPromoPreferenceStateChanged);
 

@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Copyright 2026 The Kiwi Reborn Authors. All rights reserved.
+     Use of this source code is governed by a BSD-style license that can be
+     found in the LICENSE file. -->
+
+<PreferenceScreen
+    xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <org.chromium.components.browser_ui.settings.ChromeSwitchPreference
+        android:key="adblock_switch"
+        android:title="@string/preferences_adblock_enable"
+        android:summary="@string/preferences_adblock_enable_summary" />
+
+    <PreferenceCategory android:title="@string/preferences_adblock_filter_lists">
+        <org.chromium.components.browser_ui.settings.ChromeSwitchPreference
+            android:key="adblock_list_0"
+            android:title="@string/preferences_adblock_list_easylist"
+            android:summary="@string/preferences_adblock_list_easylist_summary" />
+        <org.chromium.components.browser_ui.settings.ChromeSwitchPreference
+            android:key="adblock_list_1"
+            android:title="@string/preferences_adblock_list_easyprivacy"
+            android:summary="@string/preferences_adblock_list_easyprivacy_summary" />
+        <org.chromium.components.browser_ui.settings.ChromeSwitchPreference
+            android:key="adblock_list_2"
+            android:title="@string/preferences_adblock_list_fanboy_annoyance" />
+        <org.chromium.components.browser_ui.settings.ChromeSwitchPreference
+            android:key="adblock_list_3"
+            android:title="@string/preferences_adblock_list_easylist_cookies" />
+        <org.chromium.components.browser_ui.settings.ChromeSwitchPreference
+            android:key="adblock_list_100"
+            android:title="@string/preferences_adblock_list_custom_url" />
+        <Preference
+            android:key="adblock_custom_url"
+            android:title="@string/preferences_adblock_custom_url_title" />
+        <Preference
+            android:key="adblock_update_now"
+            android:title="@string/preferences_adblock_update_now"
+            android:summary="@string/preferences_adblock_update_now_summary" />
+    </PreferenceCategory>
+
+    <PreferenceCategory android:title="@string/preferences_adblock_advanced">
+        <Preference
+            android:key="adblock_custom_filters"
+            android:title="@string/preferences_adblock_custom_filters_title"
+            android:summary="@string/preferences_adblock_custom_filters_summary" />
+        <Preference
+            android:key="adblock_allowlist"
+            android:title="@string/preferences_adblock_allowlist_title"
+            android:summary="@string/preferences_adblock_allowlist_summary" />
+        <Preference
+            android:key="adblock_stats"
+            android:title="@string/preferences_adblock_stats_title"
+            android:summary="@string/preferences_adblock_stats_summary" />
+    </PreferenceCategory>
+
+</PreferenceScreen>
