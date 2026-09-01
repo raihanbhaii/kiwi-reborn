@@ -4,6 +4,10 @@
 
 kiwi_java_sources = [
   "java/src/org/chromium/chrome/browser/AppMenuBridge.java",
+  "java/src/org/chromium/chrome/browser/adblock/AdblockBridge.java",
+  "java/src/org/chromium/chrome/browser/adblock/AdblockController.java",
+  "java/src/org/chromium/chrome/browser/adblock/settings/AdblockSettingsFragment.java",
+  "java/src/org/chromium/chrome/browser/kiwi/KiwiFlagsBridge.java",
   "java/src/org/chromium/chrome/browser/PersonalizeResults.java",
   "java/src/org/chromium/chrome/browser/FixDevToolsWindow.java",
   "java/src/org/chromium/chrome/browser/accessibility/settings/NightScalePreference.java",

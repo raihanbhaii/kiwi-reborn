@@ -38,6 +38,7 @@
 #include <memory>
 #include <utility>
 
+#include "base/command_line.h"
 #include "base/auto_reset.h"
 #include "base/containers/contains.h"
 #include "base/debug/dump_without_crashing.h"
@@ -1741,6 +1742,17 @@ bool Document::IsPageVisible() const {
   // visibility.
   if (load_event_progress_ >= kUnloadVisibilityChangeInProgress)
     return false;
+  // Kiwi Reborn Ultimate: universal background playback. While the feature
+  // is enabled, hidden pages report themselves as visible so that site
+  // scripts cannot pause media via the Page Visibility API (e.g. YouTube's
+  // visibilitychange handler). The native media pipeline keeps running;
+  // timer throttling and memory-pressure handling are unaffected because
+  // they do not depend on this API. Unload semantics above are preserved.
+  static const bool kiwi_background_playback =
+      base::CommandLine::ForCurrentProcess()->HasSwitch(
+          "kiwi-background-playback");
+  if (kiwi_background_playback && !GetFrame()->GetPage()->IsPageVisible())
+    return true;
   return GetFrame()->GetPage()->IsPageVisible();
 }
 

@@ -105,6 +105,18 @@
         android:title="@string/preferences_tabswitcher"
         app:iconTint="@color/default_icon_color_tint_list"/>
     <org.chromium.components.browser_ui.settings.ChromeBasePreference
+        android:fragment="org.chromium.chrome.browser.adblock.settings.AdblockSettingsFragment"
+        android:key="adblock"
+        android:order="11"
+        android:icon="@drawable/ic_adblock_on"
+        android:title="@string/preferences_adblock"
+        app:iconTint="@color/default_icon_color_tint_list"/>
+    <org.chromium.components.browser_ui.settings.ChromeSwitchPreference
+        android:key="kiwi_background_playback"
+        android:order="11"
+        android:title="@string/preferences_adblock_background_playback"
+        android:summary="@string/preferences_adblock_background_playback_summary" />
+    <org.chromium.components.browser_ui.settings.ChromeBasePreference
         android:fragment="org.chromium.chrome.browser.settings.ToolbarSettings"
         android:key="toolbar_options"
         android:order="11"

@@ -2347,6 +2347,7 @@ static_library("browser") {
     "//device/base",
     "//device/base/synchronization",
     "//device/fido",
+    "//components/adblock",
     "//device/gamepad/public/cpp:switches",
     "//device/vr/buildflags",
     "//extensions/buildflags",
@@ -2493,6 +2494,12 @@ static_library("browser") {
 
   if (is_android) {
     sources += [
+      "adblock/adblock_bridge.cc",
+      "adblock/adblock_service.cc",
+      "adblock/adblock_tab_helper.cc",
+      "adblock/adblock_url_loader_throttle.cc",
+      "kiwi/kiwi_flags_bridge.cc",
+      "kiwi/kiwi_flags_service.cc",
       "after_startup_task_utils_android.cc",
       "android/android_theme_resources.h",
       "android/autocomplete/tab_matcher_android.cc",

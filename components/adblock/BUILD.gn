@@ -1,0 +1,29 @@
+# Copyright 2026 The Kiwi Reborn Authors. All rights reserved.
+# Use of this source code is governed by a BSD-style license that can be
+# found in the LICENSE file.
+#
+# Kiwi Reborn Ultimate: Brave-inspired native adblocking engine.
+#
+# Self-contained filter engine used by the network-level URL loader throttle
+# (browser process) and the cosmetic-filtering tab helper. Deliberately kept
+# free of content/ dependencies so the matching core stays light.
+
+component("adblock") {
+  output_name = "kiwi_adblock"
+
+  sources = [
+    "adblock_engine.cc",
+    "adblock_engine.h",
+    "adblock_filter.h",
+    "adblock_rule_parser.cc",
+    "adblock_rule_parser.h",
+    "adblock_resource_types.h",
+  ]
+
+  defines = [ "IS_KIWI_ADBLOCK_IMPL" ]
+
+  deps = [
+    "//base",
+    "//url",
+  ]
+}

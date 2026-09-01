@@ -10,8 +10,6 @@ import("//tools/typescript/ts_library.gni")
 import("//ui/webui/resources/include_polymer.gni")
 import("//ui/webui/resources/tools/generate_grd.gni")
 
-include_polymer = true
-
 generate_grd("build_grd") {
   grd_prefix = "webui_generated"
   out_grd = "$target_gen_dir/${grd_prefix}_resources.grd"
@@ -37,7 +35,7 @@ generate_grd("build_grd") {
     "$root_gen_dir/third_party/jstemplate/resources.grdp",
   ]
 
-  if (!is_chromeos_ash) {
+  if (!is_chromeos_ash && !is_android) {
     # Roboto Font. Roboto-Regular and Roboto-Light is already available on
     # Android, and Roboto-Medium is not used on Android. All 6 weights of
     # Roboto are available on Chrome OS.
@@ -49,7 +47,7 @@ generate_grd("build_grd") {
     ]
   }
 
-  if (include_polymer || true) {
+  if (include_polymer) {
     public_deps += [
       "cr_components:build_grdp",
       "cr_components/app_management:build_grdp",
@@ -108,7 +106,7 @@ generate_grd("build_grd") {
     ]
   }
 
-  if (!is_android && !is_ios || true) {
+  if (!is_android && !is_ios) {
     public_deps += [
       "cr_components/color_change_listener:build_grdp",
       "//third_party/lottie:build_grdp",
@@ -149,21 +147,13 @@ group("closure_compile") {
     "js:closure_compile_modules",
   ]
 
-  if (include_polymer || true) {
+  if (include_polymer) {
     deps += [ "cr_elements:closure_compile" ]
 
     if (is_chromeos_ash) {
       deps += [ "cr_components/chromeos:closure_compile" ]
     }
   }
-}
-
-group("modulize") {
-  public_deps = [
-    "js:modulize",
-    "js/cr:modulize",
-    "js/cr/ui:modulize",
-  ]
 }
 
 # TypeScript targets
@@ -203,9 +193,9 @@ checked_in_dts_files = [
 
 if (is_chromeos_ash || is_fuchsia || is_linux || is_mac || is_win) {
   checked_in_dts_files += [
-    "js/cr/ui/context_menu_handler.d.ts",
-    "js/cr/ui/menu_button.d.ts",
-    "js/cr/ui/menu_item.d.ts",
+    "js/cr/ui/context_menu_handler.m.d.ts",
+    "js/cr/ui/menu_button.m.d.ts",
+    "js/cr/ui/menu_item.m.d.ts",
   ]
 }
 
@@ -244,7 +234,7 @@ generate_definitions_js_files = [
   "js/cr/ui.m.js",
   "js/cr/ui/focus_outline_manager.m.js",
   "js/cr/ui/focus_row.m.js",
-  "js/cr/ui/keyboard_shortcut_list.js",
+  "js/cr/ui/keyboard_shortcut_list.m.js",
   "js/cr/ui/store.js",
   "js/event_tracker.m.js",
   "js/load_time_data.m.js",
@@ -254,12 +244,12 @@ generate_definitions_js_files = [
   "js/util.m.js",
 ]
 
-if (is_chromeos_ash || is_fuchsia || is_linux || is_mac || is_win || is_android) {
-#  generate_definitions_js_files += [
-#    "js/cr/ui/menu.js",
-#    "js/cr/ui/command.js",
-#    "js/cr/ui/position_util.js",
-#  ]
+if (is_chromeos_ash || is_fuchsia || is_linux || is_mac || is_win) {
+  generate_definitions_js_files += [
+    "js/cr/ui/menu.m.js",
+    "js/cr/ui/command.m.js",
+    "js/cr/ui/position_util.m.js",
+  ]
 }
 
 if (is_chromeos_ash) {

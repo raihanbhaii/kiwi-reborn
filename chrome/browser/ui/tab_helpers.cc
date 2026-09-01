@@ -4,6 +4,8 @@
 
 #include "chrome/browser/ui/tab_helpers.h"
 
+#include "chrome/browser/adblock/adblock_tab_helper.h"
+
 #include <memory>
 #include <utility>
 
@@ -630,6 +632,10 @@ void TabHelpers::AttachTabHelpers(WebContents* web_contents) {
   if (base::FeatureList::IsEnabled(feed::kWebUiFeed))
     feed::WebFeedTabHelper::CreateForWebContents(web_contents);
 #endif  // BUILDFLAG(ENABLE_FEED_V2)
+
+  // Kiwi Reborn Ultimate: cosmetic-filter injection. Attached early so it
+  // observes every load; the helper itself is inert when adblock is off.
+  AdblockTabHelper::CreateForWebContents(web_contents);
 
   // --- Section 4: The warning ---
 

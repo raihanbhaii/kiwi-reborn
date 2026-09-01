@@ -8,6 +8,20 @@ jobs:
     runs-on: ubuntu-22.04
     timeout-minutes: 360
 
+    # Chromium's build system produces one APK per ABI — a single "universal"
+    # APK containing both ABIs is not a supported configuration. So we build
+    # the two Android ABIs in parallel jobs instead:
+    #   arm64-v8a  -> modern devices (the vast majority)
+    #   armeabi-v7a -> legacy 32-bit devices
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - abi: arm64-v8a
+            cpu: arm64
+          - abi: armeabi-v7a
+            cpu: arm
+
     steps:
       - name: Free up disk space
         run: |
@@ -16,10 +30,13 @@ jobs:
           sudo rm -rf /opt/ghc
           df -h
 
-      - name: Checkout your patches
+      # Check out the branch/ref that triggered this run (default: kiwi).
+      # This way dispatching the workflow on a feature branch builds THAT
+      # branch's patches, not always the base kiwi branch.
+      - name: Checkout patches (triggering ref)
         uses: actions/checkout@v4
         with:
-          ref: kiwi
+          ref: ${{ github.ref_name }}
           path: kiwi-patches
 
       - name: Install depot_tools
@@ -60,22 +77,55 @@ jobs:
             fi
           done
 
+      # The 105-era DEPS fetches traffic_annotation_auditor from a GCS object
+      # that Google has since deleted (NoSuchKey). It is a developer audit
+      # tool, not a build input, so point that hook at a no-op shim instead of
+      # letting runhooks abort. All other storage hooks keep working.
+      - name: Neutralize deleted 105-era GCS tools
+        run: |
+          cd chromium/src
+          cat > tools/traffic_annotation/bin/noop_download.py <<'PY'
+          import sys
+          # Upstream deleted the GCS object for this 105-era dev tool; it is
+          # not needed to build chrome_public_apk. Skip silently.
+          sys.exit(0)
+          PY
+          python3 - <<'PY'
+          import re
+          p = 'DEPS'
+          s = open(p).read()
+          def repl(m):
+              block = m.group(0)
+              if 'chromium-tools-traffic_annotation' in block:
+                  return block.replace(
+                      'src/third_party/depot_tools/download_from_google_storage.py',
+                      'src/tools/traffic_annotation/bin/noop_download.py')
+              return block
+          s2 = re.sub(r'\{[^{}]*download_from_google_storage[^{}]*\}', repl, s, flags=re.S)
+          assert s2 != s, 'no traffic_annotation hook found to neutralize'
+          open(p, 'w').write(s2)
+          print('traffic_annotation hooks neutralized')
+          PY
+
       - name: Run gclient hooks
         run: |
           cd chromium
           gclient runhooks
 
+      # Note: the 105-era script has no --android flag (Android SDK/NDK come
+      # from the gclient hooks above, not apt), and it predates official
+      # ubuntu-22.04 support — hence --unsupported.
       - name: Install Android build dependencies
         run: |
           cd chromium/src
-          sudo ./build/install-build-deps.sh --android --no-prompt
+          sudo ./build/install-build-deps.sh --no-prompt --unsupported
 
-      - name: Generate build files (arm64)
+      - name: Generate build files (${{ matrix.abi }})
         run: |
           cd chromium/src
-          gn gen out/arm64 --args='
+          gn gen out/${{ matrix.cpu }} --args='
             target_os = "android"
-            target_cpu = "arm64"
+            target_cpu = "${{ matrix.cpu }}"
             is_debug = false
             is_component_build = false
             is_official_build = false
@@ -83,6 +133,16 @@ jobs:
             proprietary_codecs = true
             android_channel = "stable"
             chrome_pgo_phase = 0
+
+            # Optional Google API / OAuth keys (for Google Account sync and
+            # related Google services). Provide these as GitHub Actions
+            # secrets GOOGLE_API_KEY, GOOGLE_DEFAULT_CLIENT_ID and
+            # GOOGLE_DEFAULT_CLIENT_SECRET in your own fork; leaving them
+            # empty keeps the build fully key-free (sign-in UI stays but
+            # sync requires user-provided keys per Google ToS).
+            google_api_key = "${{ secrets.GOOGLE_API_KEY }}"
+            google_default_client_id = "${{ secrets.GOOGLE_DEFAULT_CLIENT_ID }}"
+            google_default_client_secret = "${{ secrets.GOOGLE_DEFAULT_CLIENT_SECRET }}"
 
             # Additional flags for Chromium 148
             enable_autofill_assistant = false
@@ -99,14 +159,14 @@ jobs:
             blink_symbol_level = 0
           '
 
-      - name: Compile APK
+      - name: Compile APK (${{ matrix.abi }})
         run: |
           cd chromium/src
-          autoninja -C out/arm64 chrome_public_apk
+          autoninja -C out/${{ matrix.cpu }} chrome_public_apk
 
-      - name: Upload APK as artifact
+      - name: Upload APK as artifact (${{ matrix.abi }})
         uses: actions/upload-artifact@v4
         with:
-          name: kiwi-reborn-arm64
-          path: chromium/src/out/arm64/apks/ChromePublic.apk
-          retention-days: 7
+          name: kiwi-reborn-${{ matrix.abi }}
+          path: chromium/src/out/${{ matrix.cpu }}/apks/ChromePublic.apk
+          retention-days: 14
